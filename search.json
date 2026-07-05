@@ -1,0 +1,44 @@
+[
+  {
+    "objectID": "breakout-stars.html",
+    "href": "breakout-stars.html",
+    "title": "Who breaks out next?",
+    "section": "",
+    "text": "chartData = FileAttachment(\"breakout_chart.json\").json()\nplayers = chartData.players\ntop12 = players.filter(d =&gt; d.u23)\n  .sort((a, b) =&gt; b.breakout_score - a.breakout_score)\n  .slice(0, 12)\ntop12Names = new Set(top12.map(d =&gt; d.player))\nu23 = players.filter(d =&gt; d.u23)\n\n// deterministic horizontal jitter so same-age players don't stack into columns\njitter = (name) =&gt; {\n  let h = 0;\n  for (const c of name) h = (h * 31 + c.charCodeAt(0)) % 997;\n  return (h / 997 - 0.5) * 0.72;\n}\nstage = crTriggerIndex ?? 0"
+  },
+  {
+    "objectID": "breakout-stars.html#production-is-only-half-the-question",
+    "href": "breakout-stars.html#production-is-only-half-the-question",
+    "title": "Who breaks out next?",
+    "section": "Production is only half the question",
+    "text": "Production is only half the question\n\nstage2 = Math.max(0, (crTriggerIndex ?? 0) - 4)\ngems = new Set([\"Lennart Karl\", \"Tom Bischof\", \"Lamine Yamal\", \"Arda Güler\", \"Alejandro Garnacho\"])\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nProduction says who is good now. Scouts also ask how much better a player can get. Across: the same breakout score. Up: remaining ceiling, FC 26’s potential minus current overall rating. Dot size is market value. Futures live up and to the right.\n\n\n\n\nThe two axes disagree on purpose. Finished breakout stars like Olise sit far right but low, because scouts already rate them in the 90s. Big-ceiling teenagers mostly sit left, not producing yet. The rare dots with both: Yamal, Bischof, Güler, Garnacho, and above everyone, Lennart Karl.\n\n\n\n\nRead the vertical axis skeptically. “Potential” is a scouting opinion baked into a video game, it shrinks as players get famous, and 28 of 483 players had no confident match and are omitted. A second opinion, not ground truth.\n\n\n\n\n\n\n\nPlot.plot({\n  width: Math.min(width, 760),\n  height: 540,\n  marginLeft: 46,\n  style: { fontSize: \"13px\", background: \"transparent\" },\n  x: { label: \"Breakout score (production, per-90)\", domain: [-2, 4.5], grid: true, tickSize: 0 },\n  y: { label: \"Remaining ceiling (FC 26 potential minus overall)\", domain: [-0.5, 17.5], grid: true, tickSize: 0 },\n  marks: [\n    Plot.dot(u23.filter(d =&gt; d.ceiling !== null), {\n      x: d =&gt; d.breakout_score,\n      y: d =&gt; d.ceiling + jitter(d.player) * 0.55,\n      r: d =&gt; Math.max(2.5, Math.sqrt((d.value_eur ?? 5e6) / 1e6) * 0.85),\n      fill: d =&gt; (stage2 &gt;= 1 && gems.has(d.player)) ? \"#e4572e\" : \"#0066cc\",\n      opacity: d =&gt; stage2 &gt;= 1 ? (gems.has(d.player) ? 1 : 0.25) : 0.55,\n      tip: true,\n      title: d =&gt; `${d.player} (${d.team})\\nage ${d.age} · score ${d.breakout_score}\\nceiling +${d.ceiling} · €${((d.value_eur ?? 0)/1e6).toFixed(0)}M`\n    }),\n    stage2 &gt;= 1 ? Plot.text(u23.filter(d =&gt; gems.has(d.player)), {\n      x: d =&gt; d.breakout_score,\n      y: d =&gt; d.ceiling + jitter(d.player) * 0.55,\n      text: d =&gt; d.player.split(\" \").at(-1),\n      dy: -12, fontSize: 11.5, fontWeight: 600, fill: \"#1d1d1f\", stroke: \"#fafafa\", strokeWidth: 4, paintOrder: \"stroke\"\n    }) : null,\n  ].filter(m =&gt; m !== null)\n})"
+  },
+  {
+    "objectID": "breakout-stars.html#the-full-shortlist",
+    "href": "breakout-stars.html#the-full-shortlist",
+    "title": "Who breaks out next?",
+    "section": "The full shortlist",
+    "text": "The full shortlist\nThe ranked table behind both charts is in shortlist.csv, with every raw metric included so you can see why each player ranks where he does. Produced by a reproducible pipeline: make ingest scrape scrape-sofifa analyze render."
+  },
+  {
+    "objectID": "breakout-stars.html#honest-caveats",
+    "href": "breakout-stars.html#honest-caveats",
+    "title": "Who breaks out next?",
+    "section": "Honest caveats",
+    "text": "Honest caveats\nOne season. A small window; a hot half-season inflates per-90 rates.\nBlunt league adjustment. Metrics are discounted by UEFA association coefficients (England 1.00 down to France 0.81). That corrects between leagues, not between schedules, and possession-heavy teams (PSG, Bayern, Barcelona) still inflate involvement metrics like xG chain.\nPosition bias. Scores compare players within FW/MF/DF groups, but the metric set leans attacking. Attacking full-backs (Nuno Mendes, O’Reilly) get flattered against a defender baseline.\nxG-heavy by necessity. FBref stopped publishing advanced metrics on its public pages in 2026, so five of seven metrics come from Understat’s xG model. Treat second decimals as noise.\n“Potential” is an opinion. The ceiling axis is a video-game scouting rating: subjective, fame-compressed, missing for 28 of 483 players.\nProduction is not destiny. This measures who is over-producing young. It knows nothing about injuries, temperament, or context beyond the numbers."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Soccer, told through data.",
+    "section": "",
+    "text": "Analyses and visual stories built from match data, starting with the question every scout is paid to answer.\n\n\nRanking Europe’s under-23 players on how far they out-produce their positional peers, per 90 minutes, across the Big-5 leagues in 2025-26."
+  },
+  {
+    "objectID": "index.html#who-breaks-out-next",
+    "href": "index.html#who-breaks-out-next",
+    "title": "Soccer, told through data.",
+    "section": "",
+    "text": "Ranking Europe’s under-23 players on how far they out-produce their positional peers, per 90 minutes, across the Big-5 leagues in 2025-26."
+  }
+]
